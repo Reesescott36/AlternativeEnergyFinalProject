@@ -1,0 +1,17 @@
+import pandas               #importing pandas tool
+ratedSpeed = 12.5           #rated speed of turbine
+cutinSpeed = 3              #cut in speed of turbine
+cutoutSpeed = 25            #cut out speed of turbine
+rotorArea = 50              #cross sectional area of rotor
+workBook = pandas.read_excel ("/Users/Reese/Desktop/Projects&Resources/Coding/AE_final_project/Input.xlsx") #uses pandas to import excel file into a dataframe
+for x in range(8760): #for loop used to cycle through all 8760 hours of the yearly data
+    if(workBook["Wind Speed"].iloc[x]<cutinSpeed): #output will be 0 if windspeed is less than the cut in speed
+        workBook["Wind Speed"].iloc[x] = 0
+    if(workBook["Wind Speed"].iloc[x]>cutoutSpeed): #output will be 0 if windspeed is greater than the cut out speed
+        workBook["Wind Speed"].iloc[x] = 0
+    if(workBook["Wind Speed"].iloc[x]>cutinSpeed and workBook["Wind Speed"].iloc[x]<ratedSpeed): #output will use wind turbine power formula if wind speed is between cut in and the rated wind speed
+        workBook["Wind Speed"].iloc[x] = pow(workBook["Wind Speed"].iloc[x],3)*.5*1.225*rotorArea
+    if(workBook["Wind Speed"].iloc[x]>=ratedSpeed and workBook["Wind Speed"].iloc[x]<=cutoutSpeed): #output will max out if wind speed is between rated wind speed and cut out speed
+        workBook["Wind Speed"].iloc[x] = pow(ratedSpeed,3)*.5*1.225*rotorArea
+workBook.rename(columns={"Wind Speed":"Power Output"},inplace = True) #renames the column of the dataframe to "Power Output"
+workBook.to_excel('Output.xlsx') #exports dataframe data into another spreadsheet named Output
